@@ -1,8 +1,10 @@
 ﻿using System;
 namespace Minesweeper
 {
-  class Minefield
+  public class Minefield
   {
+        public string PositionExceeded = "Indexet låg utanför gränserna för matrisen";
+
         private bool[,] _bombLocations = new bool[5, 5];
         private string[,] _bombLocationsVisual = new string[5, 5];
         private string[,] _bombLocationsReveal = new string[5, 5];
@@ -25,10 +27,10 @@ namespace Minesweeper
             {
                 for (int j = 0; j < 5; j++)
                 {
-                    _bombLocationsVisual[i, j] = "?";
+                    _bombLocationsVisual[j, i] = "?";
                 }
             }
-            PrintMineField(newState);
+            
         }
         //Kanske göra att om bool b är nytt state så kallar den på en kopia av samma klass
         public void PrintMineField(bool b)
@@ -41,54 +43,13 @@ namespace Minesweeper
                 Console.Write(0 + i + "|");
                 for (int j = 0; j < 5; j++)
                 {
-                    Console.Write(_bombLocationsVisual[i, j]);
+                    Console.Write(_bombLocationsVisual[j, i]);
                 }
                 Console.WriteLine();
             }
-            GetInput();
-        }
-
-        public void GetInput()
-        {
-            Console.WriteLine("Enter x-coordinate: ");
-            string xCoordinate = Console.ReadLine();
             
-            Console.WriteLine("Enter y-coordinate: ");
-            //Check if input is valid
-
-            string yCoordinate = Console.ReadLine();
-            if(string.IsNullOrEmpty(xCoordinate) || string.IsNullOrEmpty(yCoordinate))
-            {
-                Console.WriteLine("You have to select a valid coordinate");
-                InitializeMineField();
-            }
-            else 
-            {
-                
-                try
-                {
-                    int x = Convert.ToInt32(xCoordinate);
-                    int y = Convert.ToInt32(yCoordinate);
-
-                    if (x > 5 || y > 5)
-                    {
-                        Console.WriteLine("Position is out of bounds, try again");
-                        InitializeMineField();
-                    }
-                    else
-                    {
-                        HandleInput(x, y);
-                    }
-                }
-                catch(FormatException)
-                {
-                    Console.WriteLine("Please write an integer");
-                    InitializeMineField();
-                }
-    
-            }
-
         }
+
 
         public void HandleInput(int x, int y)
         {
@@ -102,35 +63,8 @@ namespace Minesweeper
             {
                 
                 HandleAdjacent(x, y);
-                newState = true;
-                PrintMineField(newState);
+            
                 
-
-                //Om inte bomben hittades så får vi kolla hur bombens grannar ser ut
-                //Printar nu ett O där bomben inte var men inte deras grannar 
-
-                
-                for(int j = x - 1; j <= x + 1; j++)
-                {
-                    for(int i = y - 1; i <= y + 1; i++)
-                    {
-                        if(i >= 0 && j >= 0 && i < y && j < x && !(j == x && i == y))
-                        {
-                            _bombLocationsVisual[i, j] = " ";
-                            //kolla hur bombens grannar ser ut 
-                            /*
-                            HandleAdjacent(x, y);
-                            newState = true;
-                            PrintMineField(newState);
-                            */
-
-                        }
-                    }
-                }
-
-
-
-
             }
             
             
@@ -138,49 +72,50 @@ namespace Minesweeper
 
         public void HandleAdjacent(int x, int y)
         {
+            //check the current tiles nearby bombs.
             bombCounter = 0;
             _hasBeenSearched[x, y] = true;
-
-            //Console.WriteLine("För X: " + x + " och Y: " + y + " undersöks: ");
 
             for (int j = x - 1; j <= x + 1; j++)
             {
                 for (int i = y - 1; i <= y + 1; i++)
                 {
-                    if (j < 0 || j > 4 || i < 0 || i > 4) //kollar out of grid? 
+                    if (j < 0 || j > 4 || i < 0 || i > 4)
                     {
-                        
+
                     }
                     else
                     {
-                        
-                        if(_bombLocations[j, i])
+
+                        if (_bombLocations[i, j])
                         {
+                            
                             bombCounter++;
                         }
-                        if(!_hasBeenSearched[j, i] && !_bombLocations[j, i])
-                        {
-                            HandleAdjacent(j, i);
-                        }
-                        
-                      
+
                     }
                 }
             }
-            if(bombCounter != 0)
+
+            if (bombCounter != 0)
             {
                 _bombLocationsVisual[x, y] = bombCounter.ToString();
             }
+
             else
             {
-                _bombLocationsVisual[x, y] = "/";
+                _bombLocationsVisual[x, y] = " ";
             }
             bombFound = false;
-            
+            //Om användaren matar in 2,2 så måste alla rutor nedanför undersökas:
+            //1,1 1,2 1,3 2,1 2,3 3,1 3,2 3,3
+            //man kan skapa en loop att gå igenom och se om alla runtom är false. Är samtliga det, så byt denna ruta till ett
+            // mellanslag, dvs _bombLocationsVisual[x, y] = " ";
+
         }
 
 
-        public void GameOver()
+    public void GameOver()
         {
             Console.WriteLine("Game over!");
             Console.WriteLine("Do you want to play again? Y/N");
@@ -225,7 +160,7 @@ namespace Minesweeper
                     {
                         Console.Write(_bombLocationsReveal[i, j] = "B");
                     }
-                    //Console.Write(_bombLocationsReveal[i, j]);
+                    
                 }
                 Console.WriteLine();
             }
