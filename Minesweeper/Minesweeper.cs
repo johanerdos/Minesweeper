@@ -10,13 +10,27 @@ namespace Minesweeper
 
       Minefield mf = new Minefield();
       var field = new Minefield();
-      
-                //set the bombs...
-                mf.SetBomb(0, 0);
-                mf.SetBomb(0, 1);
-                mf.SetBomb(1, 1);
-                mf.SetBomb(1, 4);
-                mf.SetBomb(4, 2);
+
+            //set the bombs...
+            //randomize bombs in the end 
+            /*
+            mf.SetBomb(0, 0);
+            mf.SetBomb(0, 1);
+            mf.SetBomb(1, 1);
+            mf.SetBomb(1, 4);
+            mf.SetBomb(4, 2);
+            */
+
+            mf.SetBomb(4, 0);
+            mf.SetBomb(4, 1);
+            mf.SetBomb(4, 2);
+            mf.SetBomb(4, 3);
+            mf.SetBomb(4, 4);
+            
+
+            
+            
+
 
             mf.InitializeMineField();
 
