@@ -20,7 +20,9 @@ namespace MinesweeperTest
             try
             {
                 mf.SetBomb(x, y);
-            }catch(System.IndexOutOfRangeException e)
+
+            }
+            catch(System.IndexOutOfRangeException e)
             {
                 StringAssert.Contains(e.Message, mf.PositionExceeded);
                 return;
@@ -28,7 +30,7 @@ namespace MinesweeperTest
 
             Assert.Fail();
 
-            //Assert.ThrowsException<System.IndexOutOfRangeException>(() => mf.SetBomb(x, y));
+            
             
             
     }

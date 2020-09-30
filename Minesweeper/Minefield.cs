@@ -1,4 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+
 namespace Minesweeper
 {
   public class Minefield
@@ -10,7 +13,10 @@ namespace Minesweeper
         private string[,] _bombLocationsReveal = new string[5, 5];
         private bool[,] _hasBeenSearched = new bool[5, 5];
         bool bombFound = false;
+        bool runGame;
         int bombCounter;
+        DateTime startTime = DateTime.Now;
+        TimeSpan finishedTime;
         private bool newState = false;
         
 
@@ -29,13 +35,15 @@ namespace Minesweeper
                 {
                     _bombLocationsVisual[j, i] = "?";
                 }
+                
             }
             
+
         }
         //Kanske göra att om bool b är nytt state så kallar den på en kopia av samma klass
         public void PrintMineField(bool b)
         {
-           
+            int charCounter = 0;
             Console.WriteLine("  01234");
             for (int i = 0; i < 5; i++)
             {
@@ -44,10 +52,26 @@ namespace Minesweeper
                 for (int j = 0; j < 5; j++)
                 {
                     Console.Write(_bombLocationsVisual[j, i]);
+
                 }
+                
                 Console.WriteLine();
+                
             }
-            
+            foreach (string c in _bombLocationsVisual)
+            {
+                if (c.Equals("?"))
+                {
+                    charCounter++;
+                }
+            }
+
+            if (charCounter == 5)
+            {
+                finishedTime = DateTime.Now.Subtract(startTime);
+                GameWon(finishedTime);
+            }
+
         }
 
 
@@ -63,11 +87,9 @@ namespace Minesweeper
             {
                 
                 HandleAdjacent(x, y);
-            
-                
+ 
             }
-            
-            
+
         }
 
         public void HandleAdjacent(int x, int y)
@@ -97,7 +119,7 @@ namespace Minesweeper
                 }
             }
 
-            if (bombCounter != 0)
+            if (bombCounter > 0)
             {
                 _bombLocationsVisual[x, y] = bombCounter.ToString();
             }
@@ -132,6 +154,7 @@ namespace Minesweeper
                 if (reveal.Equals("Y", StringComparison.OrdinalIgnoreCase))
                 {
                     RevealField();
+                    
                 }
                 else
                 {
@@ -147,7 +170,7 @@ namespace Minesweeper
         }
 
         
-        public void RevealField()
+        public Boolean RevealField()
         {
             Console.WriteLine("  01234");
             for (int i = 0; i < 5; i++)
@@ -162,8 +185,16 @@ namespace Minesweeper
                     }
                     
                 }
+                
                 Console.WriteLine();
             }
+            return newState = false;
+        }
+
+        public void GameWon(TimeSpan finishedTime)
+        {
+
+            Console.WriteLine("You've won the game! Time: " + finishedTime);
         }
         
 
