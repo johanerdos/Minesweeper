@@ -29,11 +29,26 @@ namespace MinesweeperTest
             }
 
             Assert.Fail();
-
-            
-            
-            
     }
+        [TestMethod]
+        public void FindFormatException()
+        {
+            string xC = "x";
+            string yC = "y";
+
+            try
+            {
+                int x = Convert.ToInt32(xC);
+                int y = Convert.ToInt32(yC);
+            }
+            catch(System.FormatException e)
+            {
+                StringAssert.Contains(e.Message, mf.FormatException);
+                return;
+            }
+
+            Assert.Fail();
+        }
 
   
   }
